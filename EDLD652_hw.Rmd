@@ -6,13 +6,16 @@ output:
   html_document: default
   pdf_document: default
 editor_options:
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
+library(ggrepel)
+library(gghighlight)
+library(ggtext)
 
 transit_cost <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-05/transit_cost.csv')
 
@@ -131,8 +134,60 @@ transit_2
 
 ### Hint: Look into scale_size_binned()
 
+```{r q3, echo = FALSE, warning = FALSE, message = FALSE}
+#View(transit_new)
+#View(transit_cost)
+
+#mean length and realcost by city
+q3 <- transit_cost %>% 
+  select(country, city, length, real_cost) %>% 
+  group_by(country, city)
+q3$real_cost <- as.numeric(q3$real_cost)
+#View(q3)
+#head(q3)
+q3_calc <- q3 %>% 
+  summarize(mean_length = mean(length, na.rm = TRUE),
+         mean_real_cost = mean(real_cost, na.rm = TRUE),
+         count=n()) 
+#View(q3_calc)
+
+q3_fig <- q3_calc %>% 
+  ggplot(aes(x = mean_length,
+             y = mean_real_cost,
+             size = count
+             )) +
+  geom_point(color = "#b452cd") +
+  scale_size_binned() +
+  gghighlight(country == "IN") +
+  geom_text_repel(data = dplyr::filter(q3_calc,
+                                country == "IN"),
+                  aes(label = city),
+                  min.segment.length = 0,
+                  box.padding = 0.2) +
+  scale_x_log10() +
+  scale_y_log10(labels = scales::dollar_format()) +
+  theme_minimal(base_size = 14) +
+  labs(title = "Longer transit systems tend to cost more",
+       subtitle = "<span style = 'color: #b452cd'>India</span> has among the most transit systems in the world",
+       x = "Average length",
+       y = "Average cost",
+       caption = "Note the log transformations to the axes",
+       size = "Number of transit systems") +
+  theme(plot.title.position = "plot", #to left-align title
+        plot.caption.position =  "plot", # & subtitle
+        legend.position="bottom",
+        plot.subtitle = element_markdown()) #needed to get subtitle color to work
+q3_fig
+```
+
 
 # Question 4:Using basically the same data, reproduce the following plot. Note you’ll need the country_name column in your dataset.
+
+```{r q4, echo = FALSE, warning = FALSE, message = FALSE}
+
+
+```
+
 
 
 # Question 5:Use the crime dataset to run the following code and fit the corresponding model. Note, it may take a moment to run.
