@@ -16,6 +16,8 @@ library(tidyverse)
 library(ggrepel)
 library(gghighlight)
 library(ggtext)
+library(ggforce)
+library(geomtextpath)
 
 transit_cost <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-05/transit_cost.csv')
 
@@ -183,10 +185,55 @@ q3_fig
 
 # Question 4:Using basically the same data, reproduce the following plot. Note you’ll need the country_name column in your dataset.
 
+
 ```{r q4, echo = FALSE, warning = FALSE, message = FALSE}
+# new df, joining by country codes
+q4_calc <- q3_calc
+q4_calc <- left_join(q4_calc, country_codes, by = "country")
+#View(q4_calc)
+
+q4_fig <- q4_calc %>% 
+  ggplot(aes(x = mean_length,
+             y = mean_real_cost,
+             size = count
+             )) +
+  geom_point(color = "#5C98AD") +
+  geom_mark_ellipse(aes(group = country_name, label = country_name, color = "#5C98AD"),
+                    data = filter(drop_na(q4_calc),
+                                  country_name == "United States"),
+                    size = .5,
+                    con.colour = "red",
+                    con.size = .3,
+                    con.type = "straight",
+                    label.colour = "#5C98AD",
+                    show.legend = FALSE) +
+  geom_label_repel(data = dplyr::filter(q4_calc,
+                                country == "US"),
+    aes(label = city),
+    box.padding = 0.35,
+    min.segment.length = 0,
+    point.padding = 0.5
+  ) +
+  guides(color = "none") +
+  scale_size_binned() +
+  gghighlight(country_name == "United States") +
+  scale_x_log10() +
+  scale_y_log10(labels = scales::dollar_format()) +
+  theme_minimal(base_size = 14) +
+  labs(title = "Longer transit systems tend to cost more",
+       x = "Average length",
+       y = "Average cost",
+       caption = "Note the log transformations to the axes",
+       size = "Number of transit systems") +
+  theme(plot.title.position = "plot",
+        plot.caption.position =  "plot",
+        legend.position="bottom",
+        plot.subtitle = element_markdown()) 
+q4_fig
 
 
 ```
+
 
 
 
