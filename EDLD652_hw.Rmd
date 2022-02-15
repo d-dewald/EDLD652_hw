@@ -155,10 +155,9 @@ q3_calc <- q3 %>%
 
 q3_fig <- q3_calc %>% 
   ggplot(aes(x = mean_length,
-             y = mean_real_cost,
-             size = count
+             y = mean_real_cost
              )) +
-  geom_point(color = "#b452cd") +
+  geom_point(aes(size = count), color = "#b452cd") +
   scale_size_binned() +
   gghighlight(country == "IN") +
   geom_text_repel(data = dplyr::filter(q3_calc,
@@ -194,15 +193,15 @@ q4_calc <- left_join(q4_calc, country_codes, by = "country")
 
 q4_fig <- q4_calc %>% 
   ggplot(aes(x = mean_length,
-             y = mean_real_cost,
-             size = count
+             y = mean_real_cost
              )) +
-  geom_point(color = "#5C98AD") +
-  geom_mark_ellipse(aes(group = country_name, label = country_name, color = "#5C98AD"),
+  geom_point(aes(size = count), color = "#5C98AD") +
+  geom_mark_ellipse(aes(group = country_name, label = country_name),
+                    color = "#F7B2C1",
                     data = filter(drop_na(q4_calc),
                                   country_name == "United States"),
                     size = .5,
-                    con.colour = "red",
+                    con.colour = "#F7B2C1",
                     con.size = .3,
                     con.type = "straight",
                     label.colour = "#5C98AD",
@@ -233,7 +232,6 @@ q4_fig
 
 
 ```
-
 
 
 
