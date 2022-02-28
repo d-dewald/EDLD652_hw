@@ -3,8 +3,8 @@ title: "EDLD 652 Homework"
 author: "Eliott Doyle, Diana DeWald"
 date: "2/8/2022"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 editor_options:
   chunk_output_type: console
 ---
